@@ -7,10 +7,10 @@ session = oyasis.Session(ini=config)
 tafsiriWork = oyasis.Tafsiri(session=session)
 #selecting a project to work on
 #tafsiriWork.selectProject("Mate User Guide")
-tafsiriWork.selectRandomProject()
+tafsiriWork.select_random_project()
 #select random string
 while(True):
-    randomString=tafsiriWork.getRandomString()
+    randomString=tafsiriWork.get_random_string()
     print(randomString["RandString"])
     translated = input("Translation: ")
     tafsiriWork.translate(translation=translated,todo=randomString)
