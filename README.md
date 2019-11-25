@@ -3,8 +3,9 @@
 A python tool/module for connecting to your weblate projects to enable translation without using a browser. Can be intergrated with bots and web apps
 
 Use the example usage below
-from Oyasis import oyasis
+
 ```python
+from Oyasis import oyasis
 #configure your login
 #input the correct credentials
 config = oyasis.Ini(username="username",password="password#")
