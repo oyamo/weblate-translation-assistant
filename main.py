@@ -1,6 +1,6 @@
 from Oyasis import oyasis
 #configure your login
-config = oyasis.Ini(username="oyasis",password="Anonymoush4cker1#")
+config = oyasis.Ini(username="JohnDoe",password="StrongPassword")
 #acquire new session using the config deta
 session = oyasis.Session(ini=config)
 #start translation
