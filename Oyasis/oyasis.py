@@ -6,18 +6,29 @@ import random
 class Site:
     url = "https://tafsiri.swahilinux.org"
 
+
 class Ini(Site):
     def __init__(self,**kwargs):
         self.username = kwargs["username"]
         self.password = kwargs["password"]
         self.url = super().url
-    def set_password(self,password):
+
+    def set_password(self, password):
         self.password = password
-    def set_username(self,username):
+
+    def get_password(self):
+        return self.password
+
+    def set_username(self, username):
         self.username = username
+
+    def get_username(self):
+        return self.username
+
     @staticmethod
     def get_url(self):
         return self.url
+
 
 class Session:
     def __init__(self,**kwargs):
@@ -53,18 +64,8 @@ class Session:
             #  print(link)
     def getSession(self):
         return self.session
-class Project:
-    def __init__(self,title,endpoint):
-        self.__title = title
-        self.__endpoint = endpoint
-    def set_title(self,title):
-        self.__title = title
-    def get_title(self):
-        return self.__title
-    def get_endpoint(self):
-        return self.__endpoint
-    def set_endpoint(self,endpoint):
-        self.__endpoint = endpoint
+
+
 class Tafsiri(Site):
     def __init__(self,**kwargs):
         self.__session = kwargs["session"]
@@ -133,8 +134,9 @@ class Tafsiri(Site):
                             }
 
         return result
-        #print(content_sum,translation_sum,csrf_token,endpoint,offset,ranstring
-    def translate(self,**kwargs):
+        # print(content_sum,translation_sum,csrf_token,endpoint,offset,ranstring
+
+    def translate(self, **kwargs):
         todo = kwargs["todo"]
         translation = kwargs["translation"]
         session = self.__session.getSession()
