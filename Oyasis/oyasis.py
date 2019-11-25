@@ -69,18 +69,6 @@ class Tafsiri(Site):
         self.__session = kwargs["session"]
         self.__url = super().url
 
-    def get_projects(self):
-        weblate_session = self.__session.getSession()
-        weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/projects/?format=json")
-        projects_dict = json.loads(weblate_api_response.text)
-        projects_list = projects_dict["results"]
-        while projects_dict["next"] is not None:
-            weblate_api_response = weblate_session.get(projects_dict["next_url"])
-            projects_dict = json.loads(weblate_api_response.text)
-            projects_list_next_page = projects_dict["results"]
-            projects_list += projects_list_next_page
-        return projects_list
-
     def get_components(self):
         weblate_session = self.__session.getSession()
         weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/components/?format=json")
@@ -109,14 +97,6 @@ class Tafsiri(Site):
             if progress["code"] == 'sw':
                 return progress["translated_percent"]
         print("sw not detected in "+component_url)
-
-    def select_project(self, title):
-        projects = self.get_projects()
-        self.project = projects[0]
-
-    def select_random_project(self):
-        projects = self.get_projects()
-        self.project = random.choice(projects)
 
     def get_random_string(self):
         component = self.select_component()
