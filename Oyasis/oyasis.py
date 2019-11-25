@@ -3,6 +3,9 @@ import lxml
 from bs4 import BeautifulSoup
 import re
 import random
+import json
+
+
 class Site:
     url = "https://tafsiri.swahilinux.org"
 
@@ -72,17 +75,10 @@ class Tafsiri(Site):
         self.__url = super().url
 
     def getProjects(self):
-        s = self.__session.getSession()
-        rqst = s.get(self.__url)
-        soup = BeautifulSoup(rqst.text,"lxml")
-
-        projects_ul = soup.find("ul",{"class":"dropdown-menu"})
-        #pattern_li_txt = re.compile("<a>(.*)*</a>")
-        projects = "".join([str(x.findAll(r"a"))[1:-1]  for x in projects_ul.findAll(r"li")][:-3])
-        soup = BeautifulSoup(projects,"lxml")
-        projects_list = [{"endpoint":a['href'],"title":a.contents[0]} for a in soup.find_all('a')]
-        self.__projects = projects_list
-
+        weblate_session = self.__session.getSession()
+        weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/projects/?format=json")
+        projects_dict = json.loads(weblate_api_response)
+        projects_list = projects_dict["results"]
         return projects_list
     def selectProject(self,title):
         projects = self.getProjects()
@@ -91,9 +87,8 @@ class Tafsiri(Site):
         self.project = selected_project
     def selectRandomProject(self):
         projects = self.getProjects()
-        Dict = random.choice(projects)
-        selected_project = Project(Dict["title"],Dict["endpoint"])
-        self.project = selected_project
+        self.project = random.choice(projects)
+
     def getRandomString(self):
         project = self.project
         url = self.url+"/translate"+project.get_endpoint()[9:]
