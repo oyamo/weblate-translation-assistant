@@ -72,28 +72,64 @@ class Tafsiri(Site):
     def get_projects(self):
         weblate_session = self.__session.getSession()
         weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/projects/?format=json")
-        projects_dict = json.loads(weblate_api_response)
+        projects_dict = json.loads(weblate_api_response.text)
         projects_list = projects_dict["results"]
+        while projects_dict["next"] is not None:
+            weblate_api_response = weblate_session.get(projects_dict["next_url"])
+            projects_dict = json.loads(weblate_api_response.text)
+            projects_list_next_page = projects_dict["results"]
+            projects_list += projects_list_next_page
         return projects_list
-    def selectProject(self,title):
+
+    def get_components(self):
+        weblate_session = self.__session.getSession()
+        weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/components/?format=json")
+        components_dict = json.loads(weblate_api_response.text)
+        components_list = components_dict["results"]
+        while components_dict["next"] is not None:
+            weblate_api_response = weblate_session.get(components_dict["next"])
+            components_dict = json.loads(weblate_api_response.text)
+            components_list_next_page = components_dict["results"]
+            components_list += components_list_next_page
+        return components_list
+
+    def select_component(self):
+        components = self.getComponents()
+        for component in components:
+            if self.get_translation_progress(component["statistics_url"]) < 100.0:
+                return component
+        return None
+
+    def get_translation_progress(self, component_url):
+        weblate_session = self.__session.getSession()
+        weblate_api_response = weblate_session.get(component_url)
+        statistics_dict = json.loads(weblate_api_response.text)
+        progress_results_per_languages = statistics_dict["results"]
+        for progress in progress_results_per_languages:
+            if progress["code"] == 'sw':
+                return progress["translated_percent"]
+        print("sw not detected in "+component_url)
+
+    def select_project(self, title):
         projects = self.getProjects()
-        Dict = [{"title":x["title"],"endpoint":x["endpoint"]} for x in projects if x["title"] == title][0]
-        selected_project = Project(Dict["title"],Dict["endpoint"])
-        self.project = selected_project
-    def selectRandomProject(self):
+        self.project = projects[0]
+
+    def select_random_project(self):
         projects = self.getProjects()
         self.project = random.choice(projects)
 
-    def getRandomString(self):
-        project = self.project
-        url = self.url+"/translate"+project.get_endpoint()[9:]
-        url = url+ project.get_endpoint()[10:]+"sw/?type=nottranslated"
-        s = self.__session.getSession()
-        rqst = s.get(url)
-        soup = BeautifulSoup(rqst.text,"lxml")
-        form = soup.select_one('form[class="translation-form translator"]')
-        cookie = rqst.cookies
-        csrf_token = soup.select_one('input[name="csrfmiddlewaretoken"]')['value']
+    def get_random_string(self):
+        component = self.selectComponent()
+        if component is None:
+            return "No untranslated strings"
+        url = component["web_url"]
+        url_for_untranslated_strings = url.replace("/projects/","/translate/")+"sw/?type=nottranslated"
+        weblate_session = self.__session.getSession()
+        weblate_request = weblate_session.get(url_for_untranslated_strings)
+        beautifulsoup_object = BeautifulSoup(weblate_request.text, "lxml")
+        form = beautifulsoup_object.select_one('form[class="translation-form translator"]')
+        cookie = weblate_request.cookies
+        csrf_token = beautifulsoup_object.select_one('input[name="csrfmiddlewaretoken"]')['value']
         # Set CSRF-Token
         head = {}
         head['X-CSRF-Token'] = csrf_token

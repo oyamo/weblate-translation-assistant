@@ -5,9 +5,6 @@ config = oyasis.Ini(username="JohnDoe",password="StrongPassword")
 session = oyasis.Session(ini=config)
 #start translation
 tafsiriWork = oyasis.Tafsiri(session=session)
-#selecting a project to work on
-#tafsiriWork.selectProject("Mate User Guide")
-tafsiriWork.select_random_project()
 #select random string
 while(True):
     randomString=tafsiriWork.get_random_string()
