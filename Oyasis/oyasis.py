@@ -94,7 +94,7 @@ class Tafsiri(Site):
         return components_list
 
     def select_component(self):
-        components = self.getComponents()
+        components = self.get_components()
         for component in components:
             if self.get_translation_progress(component["statistics_url"]) < 100.0:
                 return component
@@ -111,15 +111,15 @@ class Tafsiri(Site):
         print("sw not detected in "+component_url)
 
     def select_project(self, title):
-        projects = self.getProjects()
+        projects = self.get_projects()
         self.project = projects[0]
 
     def select_random_project(self):
-        projects = self.getProjects()
+        projects = self.get_projects()
         self.project = random.choice(projects)
 
     def get_random_string(self):
-        component = self.selectComponent()
+        component = self.select_component()
         if component is None:
             return "No untranslated strings"
         url = component["web_url"]
