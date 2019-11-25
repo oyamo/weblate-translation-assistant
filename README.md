@@ -2,7 +2,11 @@
 
 
 A python tool/module for connecting to your weblate projects to enable translation without using a browser. Can be intergrated with bots and web apps
-Make sure you have the following python modules in your environment **requests, lxml,bs4, re, random**
+
+
+Make sure you have the following python modules in your environment 
+
+**requests, lxml,bs4, re, random**
 
 
 ```python
