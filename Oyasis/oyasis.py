@@ -109,28 +109,31 @@ class Tafsiri(Site):
         head['X-Requested-With'] = 'XMLHttpRequest'
         head['Referer'] = url
         #get a random offset
-        offset = int(soup.select_one('input[id="id-goto-number"]')["max"])
-        random_offset = random.randrange(1,offset)
-        rqst = s.get(f"{url}&offset={random_offset}")
-        soup = BeautifulSoup(rqst.text,"lxml")
-        form = soup.select_one('form[class="translation-form translator"]')
-        formelbs = BeautifulSoup(str(form),"lxml")
-        endpoint = form['action']
-        content_sum = formelbs.select_one('input[name="contentsum"]')['value']
-        translation_sum = formelbs.select_one('input[name="translationsum"]')['value']
-        csrf_token = formelbs.select_one('input[name="csrfmiddlewaretoken"]')['value']
-        ranstring = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')['data-clipboard-text']
-        checksum =  formelbs.select_one('input[name="checksum"]')['value']
-        result = {"endpoint":endpoint,\
-                "cookies":cookie,\
-                "header":head,\
-                "checksum":checksum,\
-                "contentsum":content_sum,\
-                "csrfmiddlewaretoken":csrf_token,\
-                "RandString":ranstring,\
-                "translationsum":translation_sum,\
-                "offset":random_offset\
-                            }
+        try:
+            offset = int(soup.select_one('input[id="id-goto-number"]')["max"])
+            random_offset = random.randrange(1,offset)
+            rqst = s.get(f"{url}&offset={random_offset}")
+            soup = BeautifulSoup(rqst.text,"lxml")
+            form = soup.select_one('form[class="translation-form translator"]')
+            formelbs = BeautifulSoup(str(form),"lxml")
+            endpoint = form['action']
+            content_sum = formelbs.select_one('input[name="contentsum"]')['value']
+            translation_sum = formelbs.select_one('input[name="translationsum"]')['value']
+            csrf_token = formelbs.select_one('input[name="csrfmiddlewaretoken"]')['value']
+            ranstring = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')['data-clipboard-text']
+            checksum =  formelbs.select_one('input[name="checksum"]')['value']
+            result = {"endpoint":endpoint,\
+                    "cookies":cookie,\
+                    "header":head,\
+                    "checksum":checksum,\
+                    "contentsum":content_sum,\
+                    "csrfmiddlewaretoken":csrf_token,\
+                    "RandString":ranstring,\
+                    "translationsum":translation_sum,\
+                    "offset":random_offset\
+                                }
+        except TypeError:
+            self.getRandomString()
 
         return result
         #print(content_sum,translation_sum,csrf_token,endpoint,offset,ranstring
