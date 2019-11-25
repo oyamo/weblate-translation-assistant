@@ -6,7 +6,8 @@ Use the example usage below
 from Oyasis import oyasis
 ```python
 #configure your login
-config = oyasis.Ini(username="oyasis",password="Anonymoush4cker1#")
+#input the correct credentials
+config = oyasis.Ini(username="username",password="password#")
 #acquire new session using the config deta
 session = oyasis.Session(ini=config)
 #start translation
