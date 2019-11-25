@@ -9,6 +9,9 @@ Make sure you have the following python modules in your environment
 **requests, lxml,bs4, re, random**
 
 
+Here is a usage sample
+
+
 ```python
 from Oyasis import oyasis
 #configure your login
