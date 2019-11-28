@@ -18,7 +18,7 @@ To install:
 
 ## To-do
 
-1. The script currently successfully gets strings to be translated from the weblate website. However, translations submitted are not persisted
+1. Build bots (telegram, facebook) to leverage project functionality, to better improve crowd translation
 
 We welcome comments and suggestions for improvement 😊
 
