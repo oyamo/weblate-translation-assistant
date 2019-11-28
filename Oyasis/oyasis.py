@@ -1,7 +1,5 @@
 import requests
-import lxml
 from bs4 import BeautifulSoup
-import re
 import random
 import json
 from SeleniumScript.selenium_script import SeleniumScript as sel_script
@@ -20,14 +18,8 @@ class Ini(Site):
     def set_password(self, password):
         self.password = password
 
-    def get_password(self):
-        return self.password
-
     def set_username(self, username):
         self.username = username
-
-    def get_username(self):
-        return self.username
 
     @staticmethod
     def get_url(self):
@@ -136,16 +128,15 @@ class Tafsiri(Site):
                   "contentsum": content_sum, \
                   "csrfmiddlewaretoken": csrf_token, \
                   "RandString": ranstring, \
+                  "component": component["web_url"],\
                   "translationsum": translation_sum, \
                   "offset": random_offset \
                   }
         return result
-        # print(content_sum,translation_sum,csrf_token,endpoint,offset,ranstring
 
     def translate(self, **kwargs):
         todo = kwargs["todo"]
         translation = kwargs["translation"]
-        session = self.__session.getSession()
         url = self.url + todo["endpoint"]
         print("making submission to "+ url)
         cookie = todo["cookies"].items()[0]
