@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import re
 import random
 import json
+from SeleniumScript.selenium_script import SeleniumScript as sel_script
 
 
 class Site:
@@ -146,17 +147,16 @@ class Tafsiri(Site):
         translation = kwargs["translation"]
         session = self.__session.getSession()
         url = self.url + todo["endpoint"]
-        head = todo["header"]
-        cookies = todo["cookies"]
-        payload = {"csrfmiddlewaretoken": todo["csrfmiddlewaretoken"], \
-                   "content": translation, \
-                   "checksum": todo["checksum"], \
-                   "fuzzy": "", \
-                   "contentsum": todo["contentsum"], \
-                   "translationsum": todo["translationsum"], \
-                   "review": "0", \
-                   "save": ""}
-        head["Referer"] = url
-        post = session.post(url, data=payload, cookies=cookies, headers=head)
-        # with open("o.htm","w") as m:
-        #     print(post.text)
+        print("making submission to "+ url)
+        cookie = todo["cookies"].items()[0]
+        checksum = todo["checksum"]
+        translation_box_xpath = self.set_translation_box_xpath(checksum)
+        selenium_script = sel_script()
+        selenium_script.navigate_page(url, cookie)        
+        selenium_script.set_translation(translation_box_xpath, translation)
+        selenium_script.send_translation("/html/body/div[1]/div[3]/div/div[1]/form/div/div[3]/button[1]")
+        
+
+    @staticmethod
+    def set_translation_box_xpath(checksum):
+        return '//*[@id="id_'+checksum+'_0"]'
