@@ -64,7 +64,7 @@ class Tafsiri(Site):
 
     def get_components(self):
         weblate_session = self.__session.getSession()
-        weblate_api_response = weblate_session.get("https://tafsiri.swahilinux.org/api/components/?format=json")
+        weblate_api_response = weblate_session.get(self.__url+"/api/components/?format=json")
         components_dict = json.loads(weblate_api_response.text)
         components_list = components_dict["results"]
         while components_dict["next"] is not None:

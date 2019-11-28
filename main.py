@@ -4,10 +4,10 @@ config = oyasis.Ini(username="JohnDoe",password="StrongPassword")
 #acquire new session using the config deta
 session = oyasis.Session(ini=config)
 #start translation
-tafsiriWork = oyasis.Tafsiri(session=session)
+tafsiri_work = oyasis.Tafsiri(session=session)
 #select random string
 while(True):
-    randomString=tafsiriWork.get_random_string()
-    print(randomString["RandString"])
+    random_string_dict=tafsiri_work.get_random_string()
+    print(random_string_dict["component"]+" -> "+random_string_dict["RandString"])
     translated = input("Translation: ")
-    tafsiriWork.translate(translation=translated,todo=randomString)
+    tafsiri_work.translate(translation=translated,todo=random_string_dict)
