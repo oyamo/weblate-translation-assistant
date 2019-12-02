@@ -54,6 +54,8 @@ class Session:
     def getSession(self):
         return self.session
 
+    def getCookies(self):
+        return self.cookies
 
 
 class Tafsiri:
