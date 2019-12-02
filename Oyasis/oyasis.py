@@ -122,31 +122,42 @@ class Tafsiri:
         component = self.select_component()
         if component is None:
             return "No untranslated strings"
-        url = component["web_url"]
-        url_for_untranslated_strings = url.replace("/projects/","/translate/")+"sw/?type=nottranslated"
+        component_url = component["web_url"]
+        url_for_untranslated_strings = component_url.replace("/projects/", "/translate/") + "sw/?type=nottranslated"
+        max_offset = self.get_max_offset(component_url)
+        random_offset = random.randrange(1, max_offset)
+        result = self.get_untranslated_string(component, url_for_untranslated_strings, random_offset)
+        return result
+
+    def get_all_untranslated_strings(self):
+        strings_file = open("untranslated_strings.txt", "r")
+        strings_file_object = StringsFile()
+        for component in self.get_incomplete_components():
+            component_url = component["web_url"]
+            url_for_untranslated_strings = component_url.replace("/projects/", "/translate/") + "sw/?type=nottranslated"
+            max_offset = self.get_max_offset(component_url)
+            print("currently looking into " + component["slug"])
+            for offset in range(max_offset):
+                offset = offset + 1
+                untranslated_strings_dict = self.get_untranslated_string(component, url_for_untranslated_strings,
+                                                                         offset)
+                del untranslated_strings_dict['cookies']
+                strings_file_object.write_untranslated_strings_file(untranslated_strings_dict)
+        strings_file.close()
+        strings_file = open(self.config['PERSISTENCE']['untranslated_strings_file_path'], "r")
+        print(strings_file.read())
+        strings_file.close()
+        return strings_file.read()
+
+    def get_untranslated_string(self, component, url_for_untranslated_strings, offset):
         weblate_session = self.__session.getSession()
-        weblate_request = weblate_session.get(url_for_untranslated_strings)
+        weblate_request = weblate_session.get(f"{url_for_untranslated_strings}&offset={offset}")
         beautifulsoup_object = BeautifulSoup(weblate_request.text, "lxml")
         form = beautifulsoup_object.select_one('form[class="translation-form translator"]')
-        cookie = weblate_request.cookies
-        csrf_token = beautifulsoup_object.select_one('input[name="csrfmiddlewaretoken"]')['value']
-        # Set CSRF-Token
-        head = {}
-        head['X-CSRF-Token'] = csrf_token
-        head['X-Requested-With'] = 'XMLHttpRequest'
-        head['Referer'] = url_for_untranslated_strings
-        # get a random offset
-        offset = int(beautifulsoup_object.select_one('input[id="id-goto-number"]')["max"])
-        random_offset = random.randrange(1, offset)
-        rqst = weblate_session.get(f"{url_for_untranslated_strings}&offset={random_offset}")
-        soup = BeautifulSoup(rqst.text, "lxml")
-        form = soup.select_one('form[class="translation-form translator"]')
         formelbs = BeautifulSoup(str(form), "lxml")
-        endpoint = form['action']
-        content_sum = formelbs.select_one('input[name="contentsum"]')['value']
-        translation_sum = formelbs.select_one('input[name="translationsum"]')['value']
-        csrf_token = formelbs.select_one('input[name="csrfmiddlewaretoken"]')['value']
-        ranstring = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')['data-clipboard-text']
+        endpoint = self.url + form['action']
+        random_string = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')[
+            'data-clipboard-text']
         checksum = formelbs.select_one('input[name="checksum"]')['value']
         cookie = weblate_request.cookies
         string_dict = {"endpoint": endpoint, \
