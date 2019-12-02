@@ -98,9 +98,13 @@ class Tafsiri:
 
     def get_translation_progress(self, component_statistics_url):
         weblate_session = self.__session.getSession()
-        weblate_api_response = weblate_session.get(component_url)
+        weblate_api_response = weblate_session.get(component_statistics_url)
         statistics_dict = json.loads(weblate_api_response.text)
-        progress_results_per_languages = statistics_dict["results"]
+        try:
+            progress_results_per_languages = statistics_dict["results"]
+        except Exception as e:
+            print(f"having trouble with {component_statistics_url}")
+            return None
         for progress in progress_results_per_languages:
             if progress["code"] == 'sw':
                 return progress["translated_percent"]
@@ -136,35 +140,33 @@ class Tafsiri:
         csrf_token = formelbs.select_one('input[name="csrfmiddlewaretoken"]')['value']
         ranstring = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')['data-clipboard-text']
         checksum = formelbs.select_one('input[name="checksum"]')['value']
-        result = {"endpoint": endpoint, \
-                  "cookies": cookie, \
-                  "header": head, \
-                  "checksum": checksum, \
-                  "contentsum": content_sum, \
-                  "csrfmiddlewaretoken": csrf_token, \
-                  "RandString": ranstring, \
-                  "component": component["web_url"],\
-                  "translationsum": translation_sum, \
-                  "offset": random_offset \
-                  }
-        return result
+        cookie = weblate_request.cookies
+        string_dict = {"endpoint": endpoint, \
+                       "cookies": cookie, \
+                       "checksum": checksum, \
+                       "RandString": random_string, \
+                       "component": component["slug"], \
+                       "offset": offset \
+                       }
+        return string_dict
 
     def translate(self, **kwargs):
         todo = kwargs["todo"]
         translation = kwargs["translation"]
-        url = self.url + todo["endpoint"]
-        print("making submission to "+ url)
+        url = todo["endpoint"]
+        print("making submission to " + url)
         cookie = todo["cookies"].items()[0]
         checksum = todo["checksum"]
         translation_box_xpath = self.set_translation_box_xpath(checksum)
         selenium_script = sel_script()
-        selenium_script.navigate_page(url, cookie)        
+        selenium_script.navigate_page(url, cookie)
+        print("presently passing " + url + " to selenium as url")
         selenium_script.set_translation(translation_box_xpath, translation)
         selenium_script.send_translation("div.panel:nth-child(1) > div:nth-child(3) > button:nth-child(1)")
 
     @staticmethod
     def set_translation_box_xpath(checksum):
-        return '//*[@id="id_'+checksum+'_0"]'
+        return '//*[@id="id_' + checksum + '_0"]'
 
 
 class StringsFile:
