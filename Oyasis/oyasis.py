@@ -108,7 +108,15 @@ class Tafsiri:
         for progress in progress_results_per_languages:
             if progress["code"] == 'sw':
                 return progress["translated_percent"]
-        print("sw not detected in "+component_url)
+        return None
+
+    def get_max_offset(self, component_url):
+        url_for_untranslated_strings = component_url.replace("/projects/", "/translate/") + "sw/?type=nottranslated"
+        weblate_session = self.__session.getSession()
+        weblate_request = weblate_session.get(url_for_untranslated_strings)
+        beautifulsoup_object = BeautifulSoup(weblate_request.text, "lxml")
+        max_offset = int(beautifulsoup_object.select_one('input[id="id-goto-number"]')["max"])
+        return max_offset
 
     def get_random_string(self):
         component = self.select_component()
