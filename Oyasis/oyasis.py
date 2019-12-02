@@ -3,17 +3,15 @@ from bs4 import BeautifulSoup
 import random
 import json
 from SeleniumScript.selenium_script import SeleniumScript as sel_script
+import configparser
 
 
-class Site:
-    url = "https://tafsiri.swahilinux.org"
-
-
-class Ini(Site):
-    def __init__(self, **kwargs):
-        self.username = kwargs["username"]
-        self.password = kwargs["password"]
-        self.url = super().url
+class Ini:
+    def __init__(self):
+        self.config = configparser.ConfigParser().read('../config.ini')
+        self.username = self.config['WEBLATE']['username']
+        self.password = self.config['WEBLATE']['password']
+        self.url = self.config['WEBLATE']['url']
 
     def set_password(self, password):
         self.password = password
@@ -57,10 +55,12 @@ class Session:
         return self.session
 
 
-class Tafsiri(Site):
+
+class Tafsiri:
     def __init__(self, **kwargs):
         self.__session = kwargs["session"]
-        self.__url = super().url
+        self.config = configparser.ConfigParser().read('config.ini')
+        self.__url = self.config['WEBLATE']['url']
 
     def get_components(self):
         weblate_session = self.__session.getSession()

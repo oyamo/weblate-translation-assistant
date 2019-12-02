@@ -1,10 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import configparser
+
 
 class SeleniumScript:
     
     def __init__(self):
-        self.chromedriver_location = "/home/brute/Downloads/chromedriver"
+        self.config = configparser.ConfigParser().read('config.ini')
+        self.chromedriver_location = self.config['SELENIUM']['chrome_webdriver_location']
         self.chrome_options = Options()
         self.chrome_options.add_argument("--headless")
         self.chrome_options.add_argument("--no-sandbox")
