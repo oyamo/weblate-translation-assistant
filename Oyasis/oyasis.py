@@ -64,11 +64,15 @@ class Tafsiri:
         self.config = configparser.ConfigParser().read('config.ini')
         self.__url = self.config['WEBLATE']['url']
 
-    def get_components(self):
+    def get_all_components(self):
         weblate_session = self.__session.getSession()
-        weblate_api_response = weblate_session.get(self.__url+"/api/components/?format=json")
+        weblate_api_response = weblate_session.get(self.__url + "/api/components/?format=json")
         components_dict = json.loads(weblate_api_response.text)
-        components_list = components_dict["results"]
+        try:
+            components_list = components_dict["results"]
+        except Exception as e:
+            print(f"having trouble working on {weblate_api_response.url} that returned {weblate_api_response.text}")
+            components_list = []
         while components_dict["next"] is not None:
             weblate_api_response = weblate_session.get(components_dict["next"])
             components_dict = json.loads(weblate_api_response.text)
@@ -77,13 +81,22 @@ class Tafsiri:
         return components_list
 
     def select_component(self):
-        components = self.get_components()
-        for component in components:
-            if self.get_translation_progress(component["statistics_url"]) < 100.0:
-                return component
-        return None
+        incomplete_components = self.get_incomplete_components()
+        if incomplete_components.__len__() == 0:
+            return None
+        else:
+            return random.choice(incomplete_components)
 
-    def get_translation_progress(self, component_url):
+    def get_incomplete_components(self):
+        incomplete_components = []
+        print("about to loop through all components")
+        for component in self.get_all_components():
+            if self.get_translation_progress(component["statistics_url"]) is not None and self.get_translation_progress(
+                    component["statistics_url"]) < 100.0:
+                incomplete_components.append(component)
+        return incomplete_components
+
+    def get_translation_progress(self, component_statistics_url):
         weblate_session = self.__session.getSession()
         weblate_api_response = weblate_session.get(component_url)
         statistics_dict = json.loads(weblate_api_response.text)
