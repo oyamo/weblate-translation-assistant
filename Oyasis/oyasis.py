@@ -151,3 +151,36 @@ class Tafsiri:
     @staticmethod
     def set_translation_box_xpath(checksum):
         return '//*[@id="id_'+checksum+'_0"]'
+
+
+class StringsFile:
+
+    def __init__(self):
+        self.config = configparser.ConfigParser().read('../config.ini')
+        self.filename = self.config['PERSISTENCE']['untranslated_strings_file_path']
+        self.existing_phrase_endpoints = self.get_existing_phrase_endpoints()
+
+    def get_file_contents(self):
+        english_string_obj_file = open(self.filename, 'r')
+        english_string_obj_file_contents = english_string_obj_file.readlines()
+        return english_string_obj_file_contents
+
+    def get_existing_phrase_endpoints(self):
+        endpoints_list = []
+        all_file_contents = self.get_file_contents()
+        for entry in all_file_contents:
+            try:
+                json_obj = json.loads(entry.strip().replace("'",'"'))
+                endpoints_list.append(json_obj['endpoint'])
+            except Exception as e:
+                continue
+        return endpoints_list
+
+    def write_untranslated_strings_file(self, string_object):
+        untranslated_strings_file = open(self.filename,'w')
+        if string_object['endpoint'] not in self.existing_phrase_endpoints:
+            untranslated_strings_file.write(str(string_object))
+            untranslated_strings_file.write('\n')
+        else:
+            print(str(string_object)+' is already in file')
+
