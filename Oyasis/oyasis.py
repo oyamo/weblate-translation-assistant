@@ -145,8 +145,7 @@ class Tafsiri:
         selenium_script = sel_script()
         selenium_script.navigate_page(url, cookie)        
         selenium_script.set_translation(translation_box_xpath, translation)
-        selenium_script.send_translation("/html/body/div[1]/div[3]/div/div[1]/form/div/div[3]/button[1]")
-        
+        selenium_script.send_translation("div.panel:nth-child(1) > div:nth-child(3) > button:nth-child(1)")
 
     @staticmethod
     def set_translation_box_xpath(checksum):
