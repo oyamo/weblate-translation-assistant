@@ -157,7 +157,7 @@ class Tafsiri:
         beautifulsoup_object = BeautifulSoup(weblate_request.text, "lxml")
         form = beautifulsoup_object.select_one('form[class="translation-form translator"]')
         formelbs = BeautifulSoup(str(form), "lxml")
-        endpoint = self.url + form['action']
+        endpoint = self.__url + form['action']
         random_string = formelbs.select_one('button[class="btn btn-link btn-xs pull-right flip"]')[
             'data-clipboard-text']
         checksum = formelbs.select_one('input[name="checksum"]')['value']
