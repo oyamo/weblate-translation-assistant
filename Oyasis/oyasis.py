@@ -221,10 +221,11 @@ class StringsFile:
         return endpoints_list
 
     def write_untranslated_strings_file(self, string_object):
-        untranslated_strings_file = open(self.filename,'w')
+        untranslated_strings_file = open(self.filename,'a')
         if string_object['endpoint'] not in self.existing_phrase_endpoints:
             untranslated_strings_file.write(str(string_object))
             untranslated_strings_file.write('\n')
+            print('adding '+str(string_object))
         else:
             print(str(string_object)+' is already in file')
 
