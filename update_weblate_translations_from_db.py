@@ -6,7 +6,8 @@ config = oyasis.Ini()
 session = oyasis.Session(ini=config)
 tafsiri_work = oyasis.Tafsiri(session=session)
 
-config = configparser.ConfigParser().read('config.ini')
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 conn = sqlite3.connect(config['PERSISTENCE']['database'])
 cursor = conn.cursor()

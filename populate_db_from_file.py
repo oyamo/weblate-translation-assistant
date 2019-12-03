@@ -2,7 +2,8 @@ import sqlite3
 import json
 import configparser
 
-config = configparser.ConfigParser().read('config.ini')
+config = configparser.ConfigParser()
+config.read('config.ini')
 english_string_obj_file = open(config['PERSISTENCE']['untranslated_strings_file_path'], "r")
 english_string_obj_file_contents = english_string_obj_file.readlines()
 conn = sqlite3.connect(config['PERSISTENCE']['database'])

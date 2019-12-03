@@ -8,7 +8,8 @@ import configparser
 
 class Ini:
     def __init__(self):
-        self.config = configparser.ConfigParser().read('../config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
         self.username = self.config['WEBLATE']['username']
         self.password = self.config['WEBLATE']['password']
         self.url = self.config['WEBLATE']['url']
@@ -61,7 +62,8 @@ class Session:
 class Tafsiri:
     def __init__(self, **kwargs):
         self.__session = kwargs["session"]
-        self.config = configparser.ConfigParser().read('config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
         self.__url = self.config['WEBLATE']['url']
 
     def get_all_components(self):
@@ -191,7 +193,8 @@ class Tafsiri:
 class StringsFile:
 
     def __init__(self):
-        self.config = configparser.ConfigParser().read('../config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
         self.filename = self.config['PERSISTENCE']['untranslated_strings_file_path']
         self.existing_phrase_endpoints = self.get_existing_phrase_endpoints()
 

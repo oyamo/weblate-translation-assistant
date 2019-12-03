@@ -6,7 +6,8 @@ import configparser
 class SeleniumScript:
 
     def __init__(self):
-        self.config = configparser.ConfigParser().read('config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
         self.chromedriver_location = self.config['SELENIUM']['chrome_webdriver_location']
         self.chrome_options = Options()
         self.chrome_options.add_argument("--headless")
