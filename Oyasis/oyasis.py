@@ -175,8 +175,11 @@ class Tafsiri:
         todo = kwargs["todo"]
         translation = kwargs["translation"]
         url = todo["endpoint"]
-        print("making submission to " + url)
-        cookie = todo["cookies"].items()[0]
+        print("making submission to " + url + "\ncookies: "+str(todo["cookies"].items()))
+        try:
+            cookie = todo["cookies"].items()[0]
+        except IndexError as e:
+            cookie = ("sessionid",self.config['WEBLATE']['fallback_cookie'])
         checksum = todo["checksum"]
         translation_box_xpath = self.set_translation_box_xpath(checksum)
         selenium_script = sel_script()
