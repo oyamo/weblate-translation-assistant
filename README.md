@@ -12,9 +12,7 @@ To install:
 
 ## Running
 
-1. Configure username and password in `main.py`, 
-2. Configure appropriate target url in `Oyasis/oyasis.py`
-3. Configure appropriate chrome webdriver path in `SeleniumScript/selenium_script.py`
+1. Make appropriate configurations in `config.ini` file
 3. Run `python main.py`
 
 ## To-do
