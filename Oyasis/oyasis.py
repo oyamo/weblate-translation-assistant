@@ -202,7 +202,10 @@ class StringsFile:
         self.existing_phrase_endpoints = self.get_existing_phrase_endpoints()
 
     def get_file_contents(self):
-        english_string_obj_file = open(self.filename, 'r')
+        try:
+            english_string_obj_file = open(self.filename, 'r')
+        except FileNotFoundError as fileError:
+            return []
         english_string_obj_file_contents = english_string_obj_file.readlines()
         return english_string_obj_file_contents
 
