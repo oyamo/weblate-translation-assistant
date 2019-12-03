@@ -28,6 +28,7 @@ class SeleniumScript:
         return constructed_cookie_dict
         
     def set_translation(self, xpath, translation):
+        self.driver.find_element_by_xpath(xpath).clear()
         self.driver.find_element_by_xpath(xpath).send_keys(translation)
         
     def send_translation(self, xpath):
