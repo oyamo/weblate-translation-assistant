@@ -19,9 +19,8 @@ class SeleniumScript:
         self.driver.get(url)
         self.driver.add_cookie(self.construct_cookie(cookie, url))
         self.driver.refresh()
-    
-    @staticmethod
-    def construct_cookie(cookie, url):
+
+    def construct_cookie(self, cookie, url):
         sessionid_value = cookie[1]
         domain = url.split("//")[1].split("/")[0]
         constructed_cookie_dict = {"name": "sessionid", "domain": domain,
