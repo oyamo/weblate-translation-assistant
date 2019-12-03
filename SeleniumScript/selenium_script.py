@@ -32,5 +32,4 @@ class SeleniumScript:
         self.driver.find_element_by_xpath(xpath).send_keys(translation)
 
     def send_translation(self, xpath):
-        self.driver.find_element_by_xpath(xpath).click()
-
+        self.driver.find_element_by_css_selector(xpath).click()
